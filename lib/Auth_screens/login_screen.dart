@@ -15,13 +15,6 @@ class Loginscreen extends StatefulWidget {
 
 class _LoginscreenState extends State<Loginscreen> {
   bool isLoaded = false;
-  void initstate() {
-    super.initState();
-    Future.delayed(Duration(milliseconds: 500));
-    setState(() {
-      isLoaded = true;
-    });
-  }
 
   handlegooglebutton() async {
     await _signInWithGoogle().then((user) {
@@ -32,8 +25,8 @@ class _LoginscreenState extends State<Loginscreen> {
     });
   }
 
-  //This is the google sign in and register function,this is available in the
-  //internet you can even copy paste it
+  //This is the google sign in and register function,this is available on the
+  //internet and you can even copy paste it from there
   Future<UserCredential> _signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -55,7 +48,7 @@ class _LoginscreenState extends State<Loginscreen> {
         automaticallyImplyLeading: false,
         backgroundColor: Vx.white,
         centerTitle: true,
-        title: "Welcome to Bot Messenger"
+        title: " Welcome to Bot Messenger"
             .text
             .size(25)
             .color(Vx.blue500)
