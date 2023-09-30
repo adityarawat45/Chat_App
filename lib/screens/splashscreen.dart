@@ -1,6 +1,5 @@
 import 'package:chat_app04/Auth_screens/login_screen.dart';
 import 'package:chat_app04/main.dart';
-import 'package:chat_app04/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -15,7 +14,7 @@ class Splashscreen extends StatefulWidget {
 class _SplashscreenState extends State<Splashscreen> {
   void initState() {
     super.initState();
-    Future.delayed(Duration(milliseconds: 2500), () {
+    Future.delayed(Duration(milliseconds: 2000), () {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => Loginscreen()));
     });

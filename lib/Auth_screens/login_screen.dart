@@ -1,3 +1,4 @@
+import 'package:chat_app04/helper/dialogues.dart';
 import 'package:chat_app04/main.dart';
 import 'package:chat_app04/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,11 +15,10 @@ class Loginscreen extends StatefulWidget {
 }
 
 class _LoginscreenState extends State<Loginscreen> {
-  bool isLoaded = false;
-
   handlegooglebutton() async {
+    Dialogues.showprogressbar(context);
     await _signInWithGoogle().then((user) {
-      print(user.user);
+      print(user?.user);
 
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => Homescreen()));
@@ -27,17 +27,25 @@ class _LoginscreenState extends State<Loginscreen> {
 
   //This is the google sign in and register function,this is available on the
   //internet and you can even copy paste it from there
-  Future<UserCredential> _signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    final GoogleSignInAuthentication? googleauth =
-        await googleUser?.authentication;
+  Future<UserCredential?> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleauth?.accessToken,
-      idToken: googleauth?.idToken,
-    );
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+      final GoogleSignInAuthentication? googleauth =
+          await googleUser?.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleauth?.accessToken,
+        idToken: googleauth?.idToken,
+      );
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      Dialogues.snackbar(context,
+          "Something went wrong,please try another \nmethod to sign in!");
+
+      return null;
+    }
   }
 
   @override
@@ -59,7 +67,7 @@ class _LoginscreenState extends State<Loginscreen> {
       body: Stack(
         children: [
           AnimatedPositioned(
-              top: isLoaded ? -mq.height * .5 : mq.height * .15,
+              top: mq.height * .15,
               left: mq.width * .25,
               width: mq.width * .5,
               duration: Duration(seconds: 2),
