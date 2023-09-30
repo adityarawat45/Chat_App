@@ -1,6 +1,9 @@
 import 'package:chat_app04/main.dart';
+import 'package:chat_app04/screens/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class Loginscreen extends StatefulWidget {
@@ -18,6 +21,30 @@ class _LoginscreenState extends State<Loginscreen> {
     setState(() {
       isLoaded = true;
     });
+  }
+
+  handlegooglebutton() async {
+    await _signInWithGoogle().then((user) {
+      print(user.user);
+
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => Homescreen()));
+    });
+  }
+
+  //This is the google sign in and register function,this is available in the
+  //internet you can even copy paste it
+  Future<UserCredential> _signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication? googleauth =
+        await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleauth?.accessToken,
+      idToken: googleauth?.idToken,
+    );
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   @override
@@ -54,7 +81,9 @@ class _LoginscreenState extends State<Loginscreen> {
                     shape: StadiumBorder(),
                     backgroundColor: Vx.blue400,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    handlegooglebutton();
+                  },
                   icon: Image.asset(
                     "assets/google.png",
                     height: mq.height * .03,
