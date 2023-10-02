@@ -3,6 +3,7 @@ import 'package:chat_app04/main.dart';
 import 'package:chat_app04/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -15,18 +16,48 @@ class Loginscreen extends StatefulWidget {
 }
 
 class _LoginscreenState extends State<Loginscreen> {
+  bool _isSigningIn = false;
+
   handlegooglebutton() async {
-    Dialogues.showprogressbar(context);
-    await _signInWithGoogle().then((user) {
-      print(user?.user);
+    if (mounted) {
+      // Check if the widget is still mounted
+      setState(() {
+        _isSigningIn = true;
+      });
 
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => Homescreen()));
-    });
+      try {
+        await _signInWithGoogle().then((user) async {
+          if (mounted) {
+            if (await (api.userExists())) {
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (_) => Homescreen()));
+            } else {
+              await api.createUser().then((value) => Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (_) => Homescreen())));
+            }
+          }
+        }).catchError((error) {
+          print(error);
+          if (mounted) {
+            Dialogues.customSnackbar(context, "Oops!Something went wrong");
+          }
+        }).whenComplete(() {
+          if (mounted) {
+            setState(() {
+              _isSigningIn = false;
+            });
+          }
+        });
+      } catch (e) {
+        print(e);
+        if (mounted) {
+          setState(() {
+            _isSigningIn = false;
+          });
+        }
+      }
+    }
   }
-
-  //This is the google sign in and register function,this is available on the
-  //internet and you can even copy paste it from there
 
   Future<UserCredential?> _signInWithGoogle() async {
     try {
@@ -41,8 +72,7 @@ class _LoginscreenState extends State<Loginscreen> {
       );
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
-      Dialogues.snackbar(context,
-          "Something went wrong,please try another \nmethod to sign in!");
+      Dialogues.customSnackbar(context, "Oops!Something went wrong");
 
       return null;
     }
@@ -56,7 +86,7 @@ class _LoginscreenState extends State<Loginscreen> {
         automaticallyImplyLeading: false,
         backgroundColor: Vx.white,
         centerTitle: true,
-        title: " Welcome to Bot Messenger"
+        title: " Welcome to Doodles!"
             .text
             .size(25)
             .color(Vx.blue500)
@@ -94,6 +124,13 @@ class _LoginscreenState extends State<Loginscreen> {
                       .size(16)
                       .color(Vx.white)
                       .make())),
+          if (_isSigningIn) // Display the CircularProgressIndicator conditionally
+            Center(
+              child: SpinKitRing(
+                color: Vx.blue500,
+                size: 50,
+              ),
+            ),
         ],
       ),
     );

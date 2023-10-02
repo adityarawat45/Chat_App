@@ -1,8 +1,10 @@
-import 'package:chat_app04/Auth_screens/login_screen.dart';
 import 'package:chat_app04/apis/api.dart';
-import 'package:chat_app04/widgets/chatuser.dart';
+import 'package:chat_app04/models/chatuser.dart';
+import 'package:chat_app04/screens/profile_screen.dart';
+import 'package:chat_app04/widgets/chatuser_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -13,21 +15,23 @@ class Homescreen extends StatefulWidget {
   State<Homescreen> createState() => _HomescreenState();
 }
 
-final API auth = API();
+final API api = API();
 
 class _HomescreenState extends State<Homescreen> {
+  void initState() {
+    super.initState();
+    api.getselfinfo();
+  }
+
+  List<Chatuser> list = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Vx.white,
         appBar: AppBar(
           backgroundColor: Vx.white,
           centerTitle: true,
-          leading: Icon(
-            CupertinoIcons.home,
-            color: Vx.indigo500,
-            size: 25,
-          ),
-          title: "Bot Messenger"
+          title: "Doodles"
               .text
               .size(25)
               .color(Vx.blue500)
@@ -43,19 +47,12 @@ class _HomescreenState extends State<Homescreen> {
                   size: 25,
                 )),
             IconButton(
-                onPressed: () async {
-                  auth.SignOut();
-
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (_) => const Loginscreen()));
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => Profilescreen(user: api.me)));
                 },
-                icon: Icon(
-                  Icons.exit_to_app_rounded,
-                  color: Vx.blue500,
-                  size: 25,
-                )),
-            IconButton(
-                onPressed: () {},
                 icon: Icon(
                   CupertinoIcons.ellipsis_vertical,
                   color: Vx.blue500,
@@ -72,11 +69,30 @@ class _HomescreenState extends State<Homescreen> {
             size: 35,
           ),
         ),
-        body: ListView.builder(
-            physics: ClampingScrollPhysics(),
-            itemCount: 1,
-            itemBuilder: (context, index) {
-              return Chatusercard();
-            }).pOnly(top: 4));
+        body: StreamBuilder(
+            stream: api.getalluser(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState
+                  case ConnectionState.waiting || ConnectionState.none) {
+                return Center(
+                  child: SpinKitThreeBounce(
+                    color: Vx.blue500,
+                    size: 50,
+                  ),
+                );
+              } else if (snapshot.connectionState
+                  case ConnectionState.active || ConnectionState.done) {
+                final data = snapshot.data?.docs;
+                list = data!.map((e) => Chatuser.fromJson(e.data())).toList();
+              }
+              return ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  itemCount: list.length,
+                  itemBuilder: (context, index) {
+                    return Chatusercard(
+                      user: list[index],
+                    );
+                  }).pOnly(top: 4);
+            }));
   }
 }

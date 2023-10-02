@@ -28,7 +28,7 @@ class _SplashscreenState extends State<Splashscreen> {
         automaticallyImplyLeading: false,
         backgroundColor: Vx.white,
         centerTitle: true,
-        title: "Welcome to Bot Messenger"
+        title: "Welcome to Doodles!"
             .text
             .size(25)
             .color(Vx.blue500)
@@ -46,7 +46,7 @@ class _SplashscreenState extends State<Splashscreen> {
           Positioned(
               width: mq.width,
               bottom: mq.height * .15,
-              child: "Bot Messenger\nfor Bot people!\n🤖"
+              child: "Texting made simpler"
                   .text
                   .bold
                   .textStyle(GoogleFonts.inconsolata())
