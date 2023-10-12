@@ -10,15 +10,15 @@ class Chatuser {
     required this.lastactive,
     required this.email,
   });
-  late final String image;
-  late final bool isactive;
-  late final String email;
-  late final String id;
-  late final String name;
-  late final String about;
-  late final String pushtoken;
-  late final String createdon;
-  late final String lastactive;
+  late String image;
+  late bool isactive;
+  late String email;
+  late String id;
+  late String name;
+  late String about;
+  late String pushtoken;
+  late String createdon;
+  late String lastactive;
 
   Chatuser.fromJson(Map<String, dynamic> json) {
     image = json['image'] ?? " ";

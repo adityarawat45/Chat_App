@@ -12,7 +12,6 @@ void main() async {
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -20,8 +19,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   build(BuildContext context) {
-    return MaterialApp(
-      home: Splashscreen(),
-    );
+    return MaterialApp(home: Splashscreen());
   }
 }
